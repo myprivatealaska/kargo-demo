@@ -25,7 +25,7 @@ spec:
   - uses: kustomize-set-image
     as: update
     config:
-      path: ./src/base
+      path: ./src/stages/${{ ctx.stage }}
       images:
       - image: ${{ vars.imageRepo }}
         tag: ${{ imageFrom(vars.imageRepo).Tag }}
@@ -48,3 +48,9 @@ spec:
         sources:
         - repoURL: ${{ vars.gitopsRepo }}
           desiredRevision: ${{ task.outputs.commit.commit }}
+  - uses: argocd-wait
+    config:
+      apps:
+      - name: kargo-demo-${{ ctx.stage }}
+        waitFor:
+        - health
