@@ -5,6 +5,9 @@ metadata:
 spec:
   replicas: 2
   revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: kargo-demo
   strategy:
     canary:
       steps:
@@ -12,7 +15,19 @@ spec:
       - setWeight: 50
       - pause:
           duration: 30s
-  workloadRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: kargo-demo
+  template:
+    metadata:
+      labels:
+        app: kargo-demo
+    spec:
+      containers:
+      - image: public.ecr.aws/nginx/nginx:1.29.4
+        name: nginx
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: content
+          readOnly: true
+      volumes:
+      - configMap:
+          name: kargo-demo-content
+        name: content
