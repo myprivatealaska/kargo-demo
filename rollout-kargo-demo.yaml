@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: kargo-demo
+spec:
+  replicas: 2
+  revisionHistoryLimit: 2
+  strategy:
+    canary:
+      steps:
+      - pause: {}
+      - setWeight: 50
+      - pause:
+          duration: 30s
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: kargo-demo
