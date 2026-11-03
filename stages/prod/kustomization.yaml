@@ -4,8 +4,17 @@ kind: Kustomization
 resources:
 - ../../base
 - configmap.yaml
+- rollout.yaml
 
 patches:
+# The Rollout runs the pods, so the Deployment keeps none.
+- target:
+    kind: Deployment
+    name: kargo-demo
+  patch: |-
+    - op: replace
+      path: /spec/replicas
+      value: 0
 - target:
     kind: Service
     name: kargo-demo
