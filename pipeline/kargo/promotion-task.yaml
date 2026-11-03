@@ -49,6 +49,9 @@ spec:
         - repoURL: ${{ vars.gitopsRepo }}
           desiredRevision: ${{ task.outputs.commit.commit }}
   - uses: argocd-wait
+    # No timeout: the Promotion holds the queue until the canary is promoted or aborted.
+    retry:
+      timeout: 0s
     config:
       apps:
       - name: kargo-demo-${{ ctx.stage }}
