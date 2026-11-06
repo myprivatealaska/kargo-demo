@@ -8,24 +8,11 @@ spec:
   selector:
     matchLabels:
       app: kargo-demo
-  # The pod template is inline, not a workloadRef. Then an image change raises metadata.generation
-  # in the same apply, so Argo CD reports Progressing until the Rollouts controller sees the change.
-  template:
-    metadata:
-      labels:
-        app: kargo-demo
-    spec:
-      containers:
-      - name: nginx
-        image: public.ecr.aws/nginx/nginx:placeholder
-        volumeMounts:
-        - name: content
-          mountPath: /usr/share/nginx/html
-          readOnly: true
-      volumes:
-      - name: content
-        configMap:
-          name: kargo-demo-content
+  # A promotion changes only the Deployment, so metadata.generation of the Rollout stays the same.
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: kargo-demo
   # Without a traffic router, canary weights come from pod counts.
   strategy:
     canary:

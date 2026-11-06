@@ -7,15 +7,14 @@ resources:
 - rollout.yaml
 
 patches:
+# The Rollout runs the pods from the Deployment template, so the Deployment keeps none.
 - target:
     kind: Deployment
     name: kargo-demo
   patch: |-
-    $patch: delete
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: kargo-demo
+    - op: replace
+      path: /spec/replicas
+      value: 0
 - target:
     kind: Service
     name: kargo-demo
