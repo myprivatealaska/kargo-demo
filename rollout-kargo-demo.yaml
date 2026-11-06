@@ -11,22 +11,11 @@ spec:
   strategy:
     canary:
       steps:
+      - pause: {}
       - setWeight: 50
       - pause:
           duration: 30s
-  template:
-    metadata:
-      labels:
-        app: kargo-demo
-    spec:
-      containers:
-      - image: public.ecr.aws/nginx/nginx:1.30.0
-        name: nginx
-        volumeMounts:
-        - mountPath: /usr/share/nginx/html
-          name: content
-          readOnly: true
-      volumes:
-      - configMap:
-          name: kargo-demo-content
-        name: content
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: kargo-demo
